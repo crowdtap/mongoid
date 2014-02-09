@@ -1090,6 +1090,35 @@ describe Mongoid::Callbacks do
 
     context "when the document is embedded multiple levels" do
 
+      describe "#after_create" do
+
+        context "when the child is new" do
+
+          context "when the root is new" do
+
+            let(:band) do
+              Band.new(name: "Moderat")
+            end
+
+            let!(:record) do
+              band.records.build(name: "Moderat")
+            end
+
+            let!(:track) do
+              record.tracks.build(name: "Berlin")
+            end
+
+            before do
+              band.save
+            end
+
+            it "executes the callback" do
+              track.after_create_counter.should == 1
+            end
+          end
+        end
+      end
+
       describe "#before_create" do
 
         context "when the child is new" do
